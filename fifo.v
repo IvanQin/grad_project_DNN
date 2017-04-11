@@ -63,5 +63,5 @@ module fifo (clk,rst,r_en,w_en,data_in,index_in,data_out,index_out,fifo_empty,fi
       endcase
   end
   assign fifo_empty = (counter == 0);
-  assign fifo_full = (counter == 15);
+  assign fifo_full = (counter == 2**I_WIDTH-1);
 endmodule

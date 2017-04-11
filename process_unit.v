@@ -5,7 +5,7 @@ module process_unit(
   fetch_enable,
   a,
   b,
-  weight_index,
+  weight_index,// if the weight matrix is N*M, then 0 <= weight_index < M
   finish_enable,
   sum
 );
