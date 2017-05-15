@@ -14,7 +14,7 @@ module adder (a,b,cin,cout,sum,clk,rst,en);
   reg [31:0] c_sum;
   parameter IDLE = 3'b000, CPS1 = 3'b001, ADD = 3'b010, CPS2 = 3'b011, OUT = 3'b100;
   always @(posedge clk or negedge rst)
-    begin
+    begin 
       if(!rst)
         begin
           current_state <= IDLE;

@@ -12,7 +12,7 @@ module fifo (clk,rst,r_en,w_en,data_in,index_in,data_out,index_out,fifo_empty,fi
   output reg[I_WIDTH-1:0] index_out;
   output wire fifo_empty;
   output wire fifo_full;
-  
+  reg[1:0] flag;
   reg[CAP_WIDTH-1:0] read_ptr,write_ptr,counter;
   reg[D_WIDTH-1:0] data_mem [2**CAP_WIDTH-1:0];
   reg[I_WIDTH-1:0] index_mem [2**CAP_WIDTH-1:0];
@@ -20,46 +20,49 @@ module fifo (clk,rst,r_en,w_en,data_in,index_in,data_out,index_out,fifo_empty,fi
   begin
     if (!rst)
       begin
-        read_ptr = 0;
-        write_ptr = 0;
-        counter = 0;
-        index_out = 0;
-        data_out = 0;
+        read_ptr <= 0;
+        write_ptr <= 0;
+        counter <= 0;
+        index_out <= 0;
+        data_out <= 0;
       end
     else
       case({r_en,w_en})
-        2'b00:counter = counter;
         2'b01: // start write
         begin
-          data_mem[write_ptr] = data_in;
-          index_mem[write_ptr] = index_in;
-          counter = counter + 1;
-          write_ptr = (write_ptr == 2**CAP_WIDTH - 1)?0:write_ptr + 1;
+          flag <= 2'b11;
+          data_mem[write_ptr] <= data_in;
+          index_mem[write_ptr] <= index_in;
+          counter <= counter + 1;
+          write_ptr <= (write_ptr == 2**CAP_WIDTH - 1)?0:write_ptr + 1;
         end
         2'b10: // start read
         begin
-          data_out = data_mem[read_ptr];
-          index_out = index_mem[read_ptr];
-          counter = counter - 1;
-          read_ptr = (read_ptr == 2**CAP_WIDTH - 1)?0:read_ptr + 1;
+          flag <= 2'b10;
+          data_out <= data_mem[read_ptr];
+          index_out <= index_mem[read_ptr];
+          counter <= counter - 1;
+          read_ptr <= (read_ptr == 2**CAP_WIDTH - 1)?0:read_ptr + 1;
         end
         2'b11: // read and write
         begin
+          flag <= 2'b01;
           if (counter == 0) // directly output
             begin
-              data_out = data_in;
-              index_out = index_in;
+              data_out <= data_in;
+              index_out <= index_in;
             end
           else
             begin
-              data_mem[write_ptr] = data_in;
-              index_mem[write_ptr] = index_in;
-              data_out = data_mem[read_ptr];
-              index_out = index_mem[read_ptr];
-              write_ptr = (write_ptr == 2**CAP_WIDTH - 1)?0:write_ptr + 1;
-              read_ptr = (read_ptr == 2**CAP_WIDTH - 1)?0:read_ptr + 1;
+              data_mem[write_ptr] <= data_in;
+              index_mem[write_ptr] <= index_in;
+              data_out <= data_mem[read_ptr];
+              index_out <= index_mem[read_ptr];
+              write_ptr <= (write_ptr == 2**CAP_WIDTH - 1)?0:write_ptr + 1;
+              read_ptr <= (read_ptr == 2**CAP_WIDTH - 1)?0:read_ptr + 1;
             end
         end
+        default: flag<=2'b00;
       endcase
   end
   assign fifo_empty = (counter == 0);

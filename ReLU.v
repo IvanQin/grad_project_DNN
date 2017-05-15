@@ -3,8 +3,8 @@ module ReLU(clk,rst,data_in,data_out);
   input clk;
   input rst;
   input [D_WIDTH-1:0] data_in;
-  output reg[D_WIDTH-1:0] data_out;
-  always @(posedge clk or negedge rst)
+  output wire[D_WIDTH-1:0] data_out;
+  /*always @(posedge clk or negedge rst)
   begin
     if (!rst)
       data_out <= 0;
@@ -14,5 +14,6 @@ module ReLU(clk,rst,data_in,data_out);
           data_out <= 0;
         else data_out <= data_in;
       end
-  end
+  end*/
+  assign data_out = data_in[D_WIDTH-1]?0:data_in;
 endmodule

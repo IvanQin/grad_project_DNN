@@ -1,4 +1,4 @@
-module ram(clk,rst,w_en,data_in,data_out,w_addr,r_addr);
+module input_ram(clk,rst,w_en,data_in,data_out,w_addr,r_addr);
   parameter D_WIDTH = 16;
   parameter A_WIDTH = 4;
   input clk;
@@ -25,7 +25,7 @@ module ram(clk,rst,w_en,data_in,data_out,w_addr,r_addr);
   begin
     r_addr_reg <= r_addr;
   end
-  
+  /*
   integer i;
   always @(negedge rst)
   begin
@@ -34,8 +34,12 @@ module ram(clk,rst,w_en,data_in,data_out,w_addr,r_addr);
       RAM[i] <= 0;
     end
   end
-  
+  */
   assign data_out = RAM[r_addr_reg];
-  
+  initial
+  begin
+    $readmemb("input_ram.txt",RAM);
+  end
 endmodule
   
+
